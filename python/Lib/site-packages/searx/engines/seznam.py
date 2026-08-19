@@ -1,7 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Seznam
-
-"""
+"""Seznam"""
 
 from urllib.parse import urlencode
 from lxml import html
@@ -21,15 +19,15 @@ about = {
     "use_official_api": False,
     "require_api_key": False,
     "results": "HTML",
-    "language": "cz",
 }
+language = "cz"
 
 categories = ['general', 'web']
 base_url = 'https://search.seznam.cz/'
 
 
 def request(query, params):
-    response_index = get(base_url, headers=params['headers'], raise_for_httperror=True)
+    response_index = get(base_url, headers=params['headers'], raise_for_httperror=True, timeout=3)
     dom = html.fromstring(response_index.text)
 
     url_params = {

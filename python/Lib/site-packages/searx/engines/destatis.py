@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""DeStatis
-"""
+"""DeStatis"""
 
 from urllib.parse import urlencode
 from lxml import html
@@ -12,8 +11,8 @@ about = {
     'use_official_api': False,
     'require_api_key': False,
     'results': 'HTML',
-    'language': 'de',
 }
+language = "de"
 
 categories = []
 paging = True

@@ -18,7 +18,9 @@ SearXNG 可以部署在 Liunx 主机或 Docker 环境，虽基于 python 开发�
 
 **searx**
 
-> 20250513：同步 SearXNG仓库，基于 *5d99373bc65c7087ee743a1fe44897bad6065338*
+> 20260819：同步 SearXNG 仓库，基于 *374939b888c8644b408b793fe42d584454631cec*，版本 2026.8.19
+>
+> 20250513：同步 SearXNG 仓库，基于 *5d99373bc65c7087ee743a1fe44897bad6065338*
 >
 > 20250424：基于 SearXNG 2025.4.25+9ec9499d8，已修改适配 Windows 环境
 
@@ -26,7 +28,7 @@ SearXNG 可以部署在 Liunx 主机或 Docker 环境，虽基于 python 开发�
 
 ### 直接使用
 
-下载后直接执行 SearXNG for Windows.bat 或者 SearXNG for Windows.exe 可启动 SearXNG，默认访问路径
+下载后双击 SearXNG for Windows.vbs 可无终端一键启动（自动打开浏览器）；如需查看运行日志，可改用 SearXNG for Windows.bat 启动。两者都使用随附的嵌入式 Python，无需本地安装 Python。默认访问路径
 
 ```http
 http://localhost:8888
@@ -37,6 +39,8 @@ http://localhost:8888
 ```http
 http://127.0.0.1:8888
 ```
+
+**关闭**：运行 Stop SearXNG.bat 可停止服务。
 
 
 

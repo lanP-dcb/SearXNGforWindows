@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
- INA (Videos)
+INA (Videos)
 """
 
 from html import unescape
@@ -16,8 +16,8 @@ about = {
     "use_official_api": False,
     "require_api_key": False,
     "results": 'HTML',
-    "language": 'fr',
 }
+language = "fr"
 
 # engine dependent config
 categories = ['videos']
