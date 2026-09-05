@@ -51,8 +51,9 @@ search:
   # Available resolvers: "allesedv", "duckduckgo", "google", "kagi", "yandex" - leave blank to turn it off by default.
   favicon_resolver: ""
   # Default search language - leave blank to detect from browser information or
-  # use codes from 'languages.py'
-  default_lang: "auto"
+  # use codes from 'languages.py'. 'auto' detects from the browser; pin it to
+  # zh-CN to always search in Simplified Chinese.
+  default_lang: "zh-CN"
   # max_page: 0  # if engine supports paging, 0 means unlimited numbers of pages
   # Available languages
   # languages:
@@ -187,6 +188,17 @@ outgoing:
   pool_maxsize: 20
   # See https://www.python-httpx.org/http2/
   enable_http2: true
+  # per-engine networks: engines that set `network: <name>` here get routed
+  # through these parameters. Only yahoo goes through the SOCKS5 proxy, all
+  # other engines keep connecting directly.
+  # socks5h resolves the hostname on the proxy side (socks5 resolves locally),
+  # which avoids polluted DNS results.
+  networks:
+    yahoo:
+      proxies: socks5h://127.0.0.1:10808
+      # HTTP/2 over the SOCKS tunnel breaks the TLS record layer
+      # (ssl.SSLError: DECRYPTION_FAILED_OR_BAD_RECORD_MAC); stick to HTTP/1.1
+      enable_http2: false
   # uncomment below section if you want to use a custom server certificate
   # see https://www.python-httpx.org/advanced/#changing-the-verification-defaults
   # and https://www.python-httpx.org/compatibility/#ssl-configuration
@@ -215,6 +227,22 @@ outgoing:
   #    - 1.1.1.1
   #    - 1.1.1.2
   #    - fe80::/126
+
+
+# Inbound rate limit for the /search entrypoint, enforced by
+# searx/rate_limit.py.  It is a plain in-process counter: no Valkey, and the
+# server runs as a single threaded process, so one shared counter is enough.
+# Only /search is metered, so browsing the UI never costs quota.
+#
+# Set per_minute to 0 to switch the quota off entirely.
+rate_limit:
+  # most admitted /search requests per 60 s sliding window; beyond it the
+  # request is rejected with HTTP 429 and a Retry-After header
+  per_minute: 10
+  # minimum seconds between two admitted requests.  A request arriving sooner
+  # is held until the interval is met instead of being rejected, so the
+  # client never loses a request.  0 switches the spacing queue off.
+  min_interval: 0.5
 
 
 # Plugin configuration, for more details see
@@ -578,7 +606,7 @@ engines:
     # base_url: https://cn.bing.com  # for instances hosted in China
 
   - name: bing images
-    disabled: false
+    disabled: true
     engine: bing_images
     shortcut: bii
     # base_url: https://cn.bing.com  # for instances hosted in China
@@ -590,7 +618,7 @@ engines:
     # base_url: https://cn.bing.com  # for instances hosted in China
 
   - name: bing videos
-    disabled: false
+    disabled: true
     engine: bing_videos
     shortcut: biv
     # base_url: https://cn.bing.com  # for instances hosted in China
@@ -2139,7 +2167,7 @@ engines:
     categories: [general]
     engine: quark
     shortcut: qk
-    disabled: true
+    disabled: false
 
   - name: quark images
     quark_category: images
@@ -2293,12 +2321,12 @@ engines:
   - name: sogou images
     engine: sogou_images
     shortcut: sogoui
-    disabled: false
+    disabled: true
 
   - name: sogou videos
     engine: sogou_videos
     shortcut: sogouv
-    disabled: false
+    disabled: true
 
   - name: sogou wechat
     engine: sogou_wechat
@@ -2306,7 +2334,7 @@ engines:
     disabled: false
 
   - name: soundcloud
-    disabled: false
+    disabled: true
     engine: soundcloud
     shortcut: sc
 
@@ -2696,7 +2724,11 @@ engines:
   - name: yahoo
     engine: yahoo
     shortcut: yh
-    disabled: true
+    network: yahoo
+    # global request_timeout is 3.0s, but the search needs ~4-5s through the
+    # proxy, so this engine gets its own timeout
+    timeout: 10
+    disabled: false
 
   - name: yahoo news
     disabled: true
